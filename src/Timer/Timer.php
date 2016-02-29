@@ -6,6 +6,7 @@ class Timer {
     private $time;
     private $callback;
     private $nextTime;
+    private $timerManager;
     
     private function millisecond() {
         return round(microtime(true) * 1000);
@@ -36,6 +37,14 @@ class Timer {
     
     public function getNextTime() {
         return $this->nextTime;
+    }
+    
+    public function setTimerManager(TimerManager $timerManager) {
+        $this->timerManager = $timerManager;
+    }
+    
+    public function getTimerManager() {
+        return $this->timerManager;
     }
     
     public function getRemainingTime() {

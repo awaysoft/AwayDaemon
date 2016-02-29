@@ -6,6 +6,10 @@ use AwayDaemon\Timer\TimerManager;
 use AwayDaemon\Event\EventManager;
 
 class Application {
+    const NO_RUNNING = 0;
+    const RUNNING = 1;
+    const STOPPING = 2;
+    const STOPPED = 3;
     
     private $name = 'AwayDaemon';
     private $version = '0.0.1';
@@ -16,14 +20,14 @@ class Application {
     private $idleList = [];
     private $idleIndex = 0;
     
-    private $runningStatus = 0; /* 0: No running, 1: Running, 2: Stoping, 3: Stoped */
+    private $runningStatus = Application::NO_RUNNING;
     
     public function __construct($name, $version = '0.0.1') {
         $this->name = $name;
         $this->version = $version;
         
-        $this->timerManager = new TimerManager();
-        $this->eventManager = new EventManager();
+        $this->timerManager = new TimerManager($this);
+        $this->eventManager = new EventManager($this);
     }
     
     public function addIdle(callable $callback) {
@@ -48,11 +52,11 @@ class Application {
     }
     
     public function quit() {
-        $this->runningStatus = 2;
+        $this->runningStatus = Application::STOPPING;
     }
     
     public function run() {
-        $this->runningStatus = 1;
+        $this->runningStatus = Application::RUNNING;
         
         $this->eventManager->emit('init');
         $this->eventManager->emit('beforeLoop');
@@ -67,7 +71,7 @@ class Application {
             /* Running Timeout and Interval*/
             $this->timerManager->run();
             
-            if ($this->runningStatus === 2) {
+            if ($this->runningStatus === Application::STOPPING) {
                 break;
             }
             
@@ -79,6 +83,6 @@ class Application {
         }
         $this->eventManager->emit('afterLoop');
         $this->eventManager->emit('shutdown');
-        $this->runningStatus = 3;
+        $this->runningStatus = Application::STOPPED;
     }
 }

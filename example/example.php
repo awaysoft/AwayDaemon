@@ -20,6 +20,8 @@ class App extends Application {
     public function timeoutCallback() {
         echo "Call Timeout\n";
         $this->addIdle(array($this, "idleCallback"));
+        //var_dump($this->interval->getTimerManager());
+        //var_dump($this->interval->getTimerManager()->getApplication());
     }
     
     public function intervalCallback() {

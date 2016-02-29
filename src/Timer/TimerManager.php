@@ -3,16 +3,25 @@
 namespace AwayDaemon\Timer;
 
 class TimerManager {
-    
+    private $application;
     private $timeoutList = [];
     private $intervalList = [];
     
-    public function addTimeout(Timer &$timer) {
+    public function __construct(\AwayDaemon\Application $application = null) {
+        $this->application = $application;
+    }
+    
+    public function getApplication() {
+        return $this->application;
+    }
+    
+    public function addTimeout(Timer $timer) {
         $this->timeoutList[] = $timer;
+        $timer->setTimerManager($this);
         return $timer;
     }
     
-    public function removeTimeout(Timer &$timer) {
+    public function removeTimeout(Timer $timer) {
         $key = array_search($timer, $this->timeoutList, TRUE);
         if ($key !== FALSE) {
             unset($this->timeoutList[$key]);
@@ -21,12 +30,13 @@ class TimerManager {
         return false;
     }
     
-    public function addInterval(Timer &$timer) {
+    public function addInterval(Timer $timer) {
         $this->intervalList[] = $timer;
+        $timer->setTimerManager($this);
         return $timer;
     }
     
-    public function removeInterval(Timer &$timer) {
+    public function removeInterval(Timer $timer) {
         $key = array_search($timer, $this->intervalList, TRUE);
         if ($key !== FALSE) {
             unset($this->intervalList[$key]);
