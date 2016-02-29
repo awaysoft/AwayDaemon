@@ -1,5 +1,5 @@
 {
-    "name": "awaysoft/AwayDaemon",
+    "name": "awaysoft/away-daemon",
     "description": "A php daemon program framework",
     "license": "Apache Licence 2.0",
     "keywords": [
